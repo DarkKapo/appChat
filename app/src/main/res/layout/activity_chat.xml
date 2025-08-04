@@ -21,7 +21,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:hint="Escribe un mensaje..." />
+            android:hint="@string/escribeMensaje" />
 
         <Button
             android:id="@+id/btnImagen"
@@ -33,6 +33,6 @@
             android:id="@+id/btnEnviar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Enviar" />
+            android:text="@string/enviar" />
     </LinearLayout>
 </LinearLayout>

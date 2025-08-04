@@ -12,7 +12,7 @@
         android:id="@+id/tvTituloSalas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Salas de Chat"
+        android:text="@string/salasChat"
         android:textSize="24sp"
         android:textColor="@color/black"
         android:gravity="center"

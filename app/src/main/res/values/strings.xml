@@ -2,6 +2,13 @@
     <string name="app_name">Chat</string>
     <string name="usuario">Usuario</string>
     <string name="contraseña">Contraseña</string>
+    <string name="enviar">Enviar</string>
     <string name="iniciarSesion">Iniciar Sesión</string>
     <string name="sala">Sala</string>
+    <string name="escribeMensaje">Escribe un mensaje…</string>
+    <string name="saludos">Saludos</string>
+    <string name="salasChat">Salas de Chat</string>
+    <string name="ingresaNombre">Ingresa tu nombre</string>
+    <string name="continuar">Continuare</string>
+    <string name="usuarioPass">Usuario: admin | Contraseña: 1234</string>
 </resources>

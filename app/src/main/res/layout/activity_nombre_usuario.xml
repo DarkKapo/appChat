@@ -11,7 +11,7 @@
         android:id="@+id/etNombreUsuario"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Ingresa tu nombre"
+        android:hint="@string/ingresaNombre"
         android:inputType="textPersonName"
         android:layout_marginBottom="16dp"/>
 
@@ -19,5 +19,5 @@
         android:id="@+id/btnGuardarNombre"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Continuar"/>
+        android:text="@string/continuar"/>
 </LinearLayout>
