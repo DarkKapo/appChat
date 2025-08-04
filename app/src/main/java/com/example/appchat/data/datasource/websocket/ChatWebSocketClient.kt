@@ -12,6 +12,7 @@ class ChatWebSocketClient(
         .build()
 
     private var webSocket: WebSocket? = null
+    private var ultimoMensajeEnviado: String? = null
 
     fun conectar() {
         val request = Request.Builder()
@@ -20,12 +21,15 @@ class ChatWebSocketClient(
 
         webSocket = client.newWebSocket(request, object : WebSocketListener() {
             override fun onMessage(ws: WebSocket, text: String) {
-                onMessageReceived(text)
+                if (text != ultimoMensajeEnviado) {
+                    onMessageReceived(text)
+                }
             }
         })
     }
 
     fun enviarMensaje(mensaje: String) {
+        ultimoMensajeEnviado = mensaje
         webSocket?.send(mensaje)
     }
 
