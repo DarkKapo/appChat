@@ -26,4 +26,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp" />
+    <TextView
+        android:id="@+id/tvCredencialesInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Usuario: admin | Contraseña: 1234"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp"
+        android:layout_marginTop="12dp"
+        android:layout_gravity="center_horizontal" />
 </LinearLayout>
