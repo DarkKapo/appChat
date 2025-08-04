@@ -49,6 +49,8 @@ class ChatActivity : AppCompatActivity() {
             mensajes.addAll(lista)
             adapter.notifyDataSetChanged()
             binding.recyclerMensajes.scrollToPosition(mensajes.size - 1)
+
+            viewModel.marcarMensajesComoVistos()
         }
 
         // Iniciar WebSocket y cargar historial

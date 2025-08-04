@@ -110,5 +110,19 @@ class ChatViewModel(
         }
     }
 
+    fun marcarMensajesComoVistos() {
+        viewModelScope.launch {
+            val recibidos = repository
+                .obtenerMensajesPorSala(salaId)
+                .filter { it.estado == MensajeEstado.RECIBIDO }
 
+            for (m in recibidos) {
+                val actualizado = m.copy(estado = MensajeEstado.VISTO)
+                repository.agregarMensaje(actualizado)
+            }
+
+            // Recargar lista
+            _mensajes.value = repository.obtenerMensajesPorSala(salaId)
+        }
+    }
 }
