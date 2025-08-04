@@ -1,12 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="16dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/fondoSuave"
+    android:padding="16dp">
 
+    <!-- Título centrado -->
+    <TextView
+        android:id="@+id/tvTituloSalas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Salas de Chat"
+        android:textSize="24sp"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:padding="12dp"
+        android:textStyle="bold" />
+
+    <!-- Recycler centrado -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerSalas"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:scrollbars="vertical" />
 </LinearLayout>
