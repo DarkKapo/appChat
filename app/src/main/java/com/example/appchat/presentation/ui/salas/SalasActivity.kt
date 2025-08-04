@@ -8,6 +8,8 @@ import com.example.appchat.databinding.ActivitySalasBinding
 import com.example.appchat.domain.model.Sala
 import com.example.appchat.presentation.adapter.SalasAdapter
 import com.example.appchat.presentation.ui.chat.ChatActivity
+import com.example.appchat.presentation.ui.login.NombreUsuarioActivity
+import com.example.appchat.utils.UserManager
 
 class SalasActivity : AppCompatActivity() {
 
@@ -34,5 +36,11 @@ class SalasActivity : AppCompatActivity() {
 
         binding.recyclerSalas.layoutManager = LinearLayoutManager(this)
         binding.recyclerSalas.adapter = adapter
+
+        if (!UserManager.tieneNombreGuardado(this)) {
+            startActivity(Intent(this, NombreUsuarioActivity::class.java))
+            finish()
+            return
+        }
     }
 }

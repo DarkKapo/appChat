@@ -24,9 +24,15 @@
             android:hint="Escribe un mensaje..." />
 
         <Button
-            android:id="@+id/btnEnviar"
-            android:text="Enviar"
+            android:id="@+id/btnImagen"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="📷" />
+
+        <Button
+            android:id="@+id/btnEnviar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enviar" />
     </LinearLayout>
 </LinearLayout>

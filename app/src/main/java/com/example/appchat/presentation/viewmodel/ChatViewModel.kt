@@ -1,5 +1,6 @@
 package com.example.appchat.presentation.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,12 +9,14 @@ import com.example.appchat.data.database.MensajeEntity
 import com.example.appchat.data.datasource.websocket.ChatWebSocketClient
 import com.example.appchat.data.repository.MensajeRepository
 import com.example.appchat.domain.model.MensajeEstado
+import com.example.appchat.utils.UserManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ChatViewModel(
     private val salaId: String,
-    private val repository: MensajeRepository
+    private val repository: MensajeRepository,
+    private val context: Context
 ) : ViewModel() {
 
     private val _mensajes = MutableLiveData<List<MensajeEntity>>(emptyList())
@@ -50,7 +53,7 @@ class ChatViewModel(
         val nuevo = MensajeEntity(
             salaId = salaId,
             contenido = contenido,
-            remitente = "Yo",
+            remitente = UserManager.obtenerNombre(context) ?: "Yo",
             estado = estado,
             timestamp = System.currentTimeMillis()
         )
@@ -91,4 +94,21 @@ class ChatViewModel(
         super.onCleared()
         chatWebSocket.cerrar()
     }
+    fun enviarImagen(base64: String) {
+        val mensaje = MensajeEntity(
+            salaId = salaId,
+            contenido = "[imagen]:$base64",
+            remitente = "Yo",
+            estado = MensajeEstado.ENVIADO,
+            timestamp = System.currentTimeMillis()
+        )
+
+        viewModelScope.launch(Dispatchers.IO) {
+            chatWebSocket.enviarMensaje(mensaje.contenido)
+            repository.agregarMensaje(mensaje)
+            cargarMensajes()
+        }
+    }
+
+
 }

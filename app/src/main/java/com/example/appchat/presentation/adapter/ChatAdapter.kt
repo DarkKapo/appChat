@@ -2,47 +2,37 @@ package com.example.appchat.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.example.appchat.R
 import com.example.appchat.data.database.MensajeEntity
 import com.example.appchat.databinding.ItemMensajeBinding
+import com.example.appchat.domain.model.MensajeEstado
 
-class ChatAdapter(private val mensajes: List<MensajeEntity>) :
-    RecyclerView.Adapter<ChatAdapter.MensajeViewHolder>() {
+class ChatAdapter(
+    private val mensajes: List<MensajeEntity>
+) : RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
 
-    inner class MensajeViewHolder(val binding: ItemMensajeBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class ChatViewHolder(val binding: ItemMensajeBinding) : RecyclerView.ViewHolder(binding.root)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MensajeViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
         val binding = ItemMensajeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return MensajeViewHolder(binding)
+        return ChatViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: MensajeViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         val mensaje = mensajes[position]
-        val estado = when (mensaje.estado) {
-            "PENDIENTE" -> " ⌛"
-            "ENVIADO" -> " ✓"
-            "RECIBIDO" -> " 📥"
-            else -> ""
-        }
-
-        holder.binding.tvMensaje.text = "${mensaje.contenido}$estado"
-
-        val layoutParams = holder.binding.layoutMensaje.layoutParams as FrameLayout.LayoutParams
-
-        if (mensaje.remitente == "Yo") {
-            // Alineado a la derecha e izquierda con sus colores respectivos
-            layoutParams.gravity = android.view.Gravity.END
-            holder.binding.layoutMensaje.setBackgroundResource(R.drawable.bg_mensaje_yo)
-        } else {
-            layoutParams.gravity = android.view.Gravity.START
-            holder.binding.layoutMensaje.setBackgroundResource(R.drawable.bg_mensaje_otros)
-        }
-
-        holder.binding.layoutMensaje.layoutParams = layoutParams
+        holder.binding.tvMensaje.text = formatearMensaje(mensaje)
     }
-
 
     override fun getItemCount(): Int = mensajes.size
+
+    private fun formatearMensaje(m: MensajeEntity): String {
+        val emoji = when (m.estado) {
+            MensajeEstado.ENVIADO -> "✅"
+            MensajeEstado.RECIBIDO -> "📬"
+            MensajeEstado.VISTO -> "👁️"
+            MensajeEstado.PENDIENTE -> "⏳"
+            else -> "❓"
+        }
+        return "${m.remitente}: ${m.contenido} $emoji"
+    }
 }
