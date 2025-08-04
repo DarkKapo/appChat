@@ -55,4 +55,5 @@ dependencies {
     implementation(libs.roomRuntime)
     implementation(libs.roomKtx)
     kapt(libs.roomCompiler)
+    implementation(libs.lifecycleViewModel)
 }

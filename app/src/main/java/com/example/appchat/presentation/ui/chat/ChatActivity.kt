@@ -2,24 +2,23 @@ package com.example.appchat.presentation.ui.chat
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appchat.databinding.ActivityChatBinding
 import com.example.appchat.data.database.AppDatabase
 import com.example.appchat.data.database.MensajeEntity
-import com.example.appchat.data.datasource.websocket.ChatWebSocketClient
 import com.example.appchat.data.repository.MensajeRepository
-import com.example.appchat.domain.model.MensajeEstado
 import com.example.appchat.presentation.adapter.ChatAdapter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.example.appchat.presentation.viewmodel.ChatViewModel
+import com.example.appchat.presentation.viewmodel.ChatViewModelFactory
+import com.example.appchat.utils.NetworkUtils
 
 class ChatActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityChatBinding
-    private lateinit var mensajeRepository: MensajeRepository
+    private lateinit var viewModel: ChatViewModel
     private lateinit var adapter: ChatAdapter
-    private lateinit var chatWebSocket: ChatWebSocketClient
-    private val mensajes = mutableListOf<String>()
+    private val mensajes = mutableListOf<MensajeEntity>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,63 +27,36 @@ class ChatActivity : AppCompatActivity() {
 
         val salaId = intent.getStringExtra("salaId") ?: "default"
 
-        // Inicializar repo
-        mensajeRepository = MensajeRepository(
+        // Crear repositorio y ViewModel
+        val repo = MensajeRepository(
             AppDatabase.getInstance(this).mensajeDao()
         )
+        val factory = ChatViewModelFactory(salaId, repo)
+        viewModel = ViewModelProvider(this, factory)[ChatViewModel::class.java]
 
-        // Configurar recyclerView
+        // Configurar RecyclerView
         adapter = ChatAdapter(mensajes)
         binding.recyclerMensajes.layoutManager = LinearLayoutManager(this)
         binding.recyclerMensajes.adapter = adapter
 
-        // Cargar historial desde Room
-        CoroutineScope(Dispatchers.IO).launch {
-            val historial = mensajeRepository.obtenerMensajesPorSala(salaId)
-            mensajes.addAll(historial.map { "${it.remitente}: ${it.contenido}" })
-            runOnUiThread { adapter.notifyDataSetChanged() }
+        // Observar cambios en los mensajes
+        viewModel.mensajes.observe(this) { lista ->
+            mensajes.clear()
+            mensajes.addAll(lista)
+            adapter.notifyDataSetChanged()
+            binding.recyclerMensajes.scrollToPosition(mensajes.size - 1)
         }
 
-        // Iniciar websocket
-        chatWebSocket = ChatWebSocketClient(salaId) { mensajeRecibido ->
-            runOnUiThread {
-                mensajes.add("Amigo: $mensajeRecibido")
-                adapter.notifyItemInserted(mensajes.size - 1)
-            }
+        // Iniciar WebSocket y cargar historial
+        viewModel.iniciarWebSocket()
 
-            val recibido = MensajeEntity(
-                salaId = salaId,
-                contenido = mensajeRecibido,
-                remitente = "Amigo",
-                estado = MensajeEstado.RECIBIDO,
-                timestamp = System.currentTimeMillis()
-            )
-            CoroutineScope(Dispatchers.IO).launch {
-                mensajeRepository.agregarMensaje(recibido)
-            }
-        }
-
-        chatWebSocket.conectar()
-
-        // Envio de mensaje
+        // Enviar mensaje
         binding.btnEnviar.setOnClickListener {
             val texto = binding.etMensaje.text.toString()
             if (texto.isNotBlank()) {
-                mensajes.add("Yo: $texto")
-                adapter.notifyItemInserted(mensajes.size - 1)
-                chatWebSocket.enviarMensaje(texto)
                 binding.etMensaje.text.clear()
-
-                val nuevo = MensajeEntity(
-                    salaId = salaId,
-                    contenido = texto,
-                    remitente = "Yo",
-                    estado = MensajeEstado.ENVIADO,
-                    timestamp = System.currentTimeMillis()
-                )
-                CoroutineScope(Dispatchers.IO).launch {
-                    mensajeRepository.agregarMensaje(nuevo)
-                }
+                val conectado = NetworkUtils.estaConectado(this)
+                viewModel.enviarMensaje(texto, conectado)
             }
         }
     }
